@@ -23,7 +23,8 @@ namespace ProjetoAppLivraria.Repository
             using (var conexao = new MySqlConnection(_conexaoMySQL))
             {
                 conexao.Open();
-                MySqlCommand cmd = new MySqlCommand("insert into tbAutor (nomeAutor, sta) values (@nomeAutor, @sta)", conexao);
+
+                MySqlCommand cmd = new MySqlCommand("insert into tbAutor (nomeAutor, sta) values (@nomeAutor, @sta)", conexao); // @: PARAMETRO
 
                 cmd.Parameters.Add("@nomeAutor", MySqlDbType.VarChar).Value = autor.nomeAutor;
                 cmd.Parameters.Add("@sta", MySqlDbType.VarChar).Value = autor.status;
@@ -59,9 +60,9 @@ namespace ProjetoAppLivraria.Repository
                     Autlist.Add(
                         new Autor
                         {
-                            Id = Convert.ToInt32(dr["codAni"]),
-                            nomeAutor = (string)(dr["nomeAni"]),
-                            status = (string)(dr["nomeAni"]),
+                            Id = Convert.ToInt32(dr["codAutor"]),
+                            nomeAutor = (string)(dr["nomeAutor"]),
+                            status = Convert.ToString(dr["sta"]),
                         }
                         );
                 }

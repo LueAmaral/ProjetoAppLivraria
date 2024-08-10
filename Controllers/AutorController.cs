@@ -13,6 +13,10 @@ namespace ProjetoAppLivraria.Controllers
             _logger = logger;
             _autorRepository = autorRepository;
         }
+        public IActionResult Index()
+        {
+            return View(_autorRepository.ObterTodosAutores());
+        }
         public IActionResult CadAutor(Autor autor)
         {
             _autorRepository.CadastrarAutor(autor);
