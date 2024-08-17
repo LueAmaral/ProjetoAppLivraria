@@ -18,18 +18,14 @@ namespace ProjetoAppLivraria.Controllers
         }
         public IActionResult Index()
         {
-            return View(_livroRepository.ObterTodosLivros);
+            return View(_livroRepository.ObterTodosLivros());
         }
         [HttpGet]
         public IActionResult CadLivro()
         {
             // Carrega a lista de autor
             var listaAutor = _autorRepository.ObterTodosAutores();
-            var ObjAutor = new Livro
-            {
-                ListaAutor = (List<Autor>)listaAutor
-            };
-            ViewBag.ListaAutor = new SelectList(listaAutor, "id", "nomeAutor");
+            ViewBag.ListaAutor = new SelectList(listaAutor, "Id", "nomeAutor");
             return View();
         }
         [HttpPost]
@@ -37,7 +33,7 @@ namespace ProjetoAppLivraria.Controllers
         {
             // Lista de autores
             var listaAutor = _autorRepository.ObterTodosAutores();
-            ViewBag.ListaAutor = new SelectList(listaAutor, "id", "nomeAutor");
+            ViewBag.ListaAutor = new SelectList(listaAutor, "Id", "nomeAutor");
             _livroRepository.CadastrarLivro(livro);
             return RedirectToAction(nameof(Index));
         }

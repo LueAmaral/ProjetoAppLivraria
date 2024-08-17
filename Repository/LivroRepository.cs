@@ -37,7 +37,7 @@ namespace ProjetoAppLivraria.Repository
                 conexao.Open();
                 MySqlCommand cmd = new MySqlCommand("insert into tblivro (nomeLivro, codAutor) values (@nomeLivro, @codAutor)", conexao);
 
-                cmd.Parameters.Add("@nomLivro", MySqlDbType.VarChar).Value = livro.nomeLivro;
+                cmd.Parameters.Add("@nomeLivro", MySqlDbType.VarChar).Value = livro.nomeLivro;
                 cmd.Parameters.Add("@codAutor", MySqlDbType.Int32).Value = livro.RefAutor.Id;
 
                 cmd.ExecuteNonQuery();
@@ -79,7 +79,7 @@ namespace ProjetoAppLivraria.Repository
                     {
                         Id = Convert.ToInt32(dr["codAutor"]),
                         nomeAutor = (string)(dr["nomeAutor"]),
-                        status = (string)(dr["sta"])
+                        status = Convert.ToString(dr["sta"])
                     };
                 }
                 return livro;
@@ -103,12 +103,12 @@ namespace ProjetoAppLivraria.Repository
                         new Livro
                         {
                             codLivro = Convert.ToInt32(dr["codLivro"]),
-                            nomeLivro = (string)(dr["nomLivro"]),
+                            nomeLivro = (string)(dr["nomeLivro"]),
                             RefAutor = new Autor
                             {
                                 Id = Convert.ToInt32(dr["codAutor"]),
-                                nomeAutor = (string)(dr["nomAutor"]),
-                                status = (string)(dr["sta"])
+                                nomeAutor = (string)(dr["nomeAutor"]),
+                                status = Convert.ToString(dr["sta"])
                             }
                     });
                 }
