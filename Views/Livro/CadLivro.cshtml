@@ -4,9 +4,7 @@
     ViewData["Title"] = "CadLivro";
 }
 
-<h1>CadLivro</h1>
-
-<h4>Livro</h4>
+<h4>Cadastrar Livro</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -14,25 +12,26 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <div class="form-group">
-                <div class="col-md-10">
-                    @Html.DropDownListFor(model => model.RefAutor.Id, ViewBag.ListaAutor as SelectList, "Selecione o autor",
-                    htmlAttributes: new { @class = "form-control" })
-                </div>
+                <label asp-for="RefAutor.Id" class="control-label">Autor</label>
+                @Html.DropDownListFor(model => model.RefAutor.Id, ViewBag.ListaAutor as SelectList, "Selecione o autor",
+                         htmlAttributes: new { @class = "form-control" })
+                <span asp-validation-for="RefAutor.Id" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="nomeLivro" class="control-label"></label>
+                <label asp-for="nomeLivro" class="control-label mt-3">Nome do Livro</label>
                 <input asp-for="nomeLivro" class="form-control" />
                 <span asp-validation-for="nomeLivro" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+            <div class="form-group mt-3 mb-3">
+                <input type="submit" value="Criar" class="btn btn-primary" />
             </div>
+
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Voltar para a lista</a>
 </div>
 
 @section Scripts {

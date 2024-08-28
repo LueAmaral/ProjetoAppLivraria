@@ -37,7 +37,7 @@ namespace ProjetoAppLivraria.Controllers
             _livroRepository.CadastrarLivro(livro);
             return RedirectToAction(nameof(Index));
         }
-        public IActionResult editarLivro(int id)
+        public IActionResult EditarLivro(int id)
         {
             // Carrega a lista de autor
             var listaAutor = _autorRepository.ObterTodosAutores();
@@ -51,7 +51,7 @@ namespace ProjetoAppLivraria.Controllers
         }
 
         [HttpPost]
-        public IActionResult editarLivro(Livro livro)
+        public IActionResult EditarLivro(Livro livro)
         {
             //***Lista de autores***
             var listaAutor = _autorRepository.ObterTodosAutores();
@@ -60,7 +60,7 @@ namespace ProjetoAppLivraria.Controllers
             _livroRepository.AtualizarLivro(livro);
             return RedirectToAction(nameof(Index));
         }
-        public IActionResult Delete(int id)
+        public IActionResult ExcluirLivro(int id)
         {
             _livroRepository.ExcluirLivro(id);
             return RedirectToAction(nameof(Index));

@@ -1,43 +1,44 @@
 ﻿@model ProjetoAppLivraria.Models.Livro
 
 @{
-    ViewData["Title"] = "editarLivro";
+    ViewData["Title"] = "EditarLivro";
 }
 
-<h1>editarLivro</h1>
+<h1>EditarLivro</h1>
 
 <h4>Livro</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="editarLivro">
+        <form asp-action="EditarLivro">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="codLivro" class="control-label"></label>
-                <input asp-for="codLivro" class="form-control" />
+                <input asp-for="codLivro" class="form-control" readonly/>
                 <span asp-validation-for="codLivro" class="text-danger"></span>
             </div>
             <div class="form-groud">
-                <div class="col-md-10">
+                <label  class="control-label">Autor</label>
+                <div>
                     @Html.DropDownListFor(model => model.RefAutor.Id, ViewBag.ListaAutores as SelectList, "Selecione o autor",
                     htmlAttributes: new { @class = "form-control" })
                 </div>
             </div>
             <br />
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="nomeLivro" class="control-label"></label>
                 <input asp-for="nomeLivro" class="form-control" />
                 <span asp-validation-for="nomeLivro" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Salvar" class="btn btn-primary mb-3" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Voltar para a lista</a>
 </div>
 
 @section Scripts {

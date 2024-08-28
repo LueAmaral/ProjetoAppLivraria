@@ -6,17 +6,9 @@ using System.Security.Cryptography;
 
 namespace ProjetoAppLivraria.Repository
 {
-    public class AutorRepository : IAutorRepository
+    public class AutorRepository(IConfiguration conf) : IAutorRepository
     {
-        private readonly string _conexaoMySQL;
-        public AutorRepository(IConfiguration conf)
-        {
-            _conexaoMySQL = conf.GetConnectionString("ConexaoMySQL");
-        }
-        public void AtualizarAutor(Autor autor)
-        {
-            throw new NotImplementedException();
-        }
+        private readonly string _conexaoMySQL = conf.GetConnectionString("ConexaoMySQL");
 
         public void CadastrarAutor(Autor autor)
         {
@@ -34,15 +26,67 @@ namespace ProjetoAppLivraria.Repository
             }
         }
 
-        public void ExcluirAutor(int autor)
+        public void EditarAutor(Autor autor)
         {
-            throw new NotImplementedException();
+            using (var conexao = new MySqlConnection(_conexaoMySQL))
+            {
+                conexao.Open();
+
+                MySqlCommand cmd = new MySqlCommand("UPDATE tbAutor SET nomeAutor = @nomeAutor, sta = @sta WHERE codAutor = @codAutor", conexao);
+
+                cmd.Parameters.Add("@nomeAutor", MySqlDbType.VarChar).Value = autor.nomeAutor;
+                cmd.Parameters.Add("@sta", MySqlDbType.VarChar).Value = autor.status;
+                cmd.Parameters.Add("@codAutor", MySqlDbType.Int32).Value = autor.Id;
+
+                cmd.ExecuteNonQuery();
+                conexao.Close();
+            }
         }
 
-        public Autor ObterAutor(int Id)
+        public void ExcluirAutor(int id)
         {
-            throw new NotImplementedException();
+            using (var conexao = new MySqlConnection(_conexaoMySQL))
+            {
+                conexao.Open();
+
+                MySqlCommand cmd = new MySqlCommand("DELETE FROM tbAutor WHERE codAutor = @codAutor", conexao);
+                cmd.Parameters.Add("@codAutor", MySqlDbType.Int32).Value = id;
+
+                cmd.ExecuteNonQuery();
+                conexao.Close();
+            }
         }
+
+        public Autor ObterAutor(int id)
+        {
+            Autor autor = null;
+
+            using (var conexao = new MySqlConnection(_conexaoMySQL))
+            {
+                conexao.Open();
+
+                MySqlCommand cmd = new MySqlCommand("SELECT * FROM tbAutor WHERE codAutor = @codAutor", conexao);
+                cmd.Parameters.Add("@codAutor", MySqlDbType.Int32).Value = id;
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        autor = new Autor
+                        {
+                            Id = Convert.ToInt32(reader["codAutor"]),
+                            nomeAutor = reader["nomeAutor"] == DBNull.Value ? null : reader["nomeAutor"].ToString(),
+                            status = reader["sta"] == DBNull.Value ? null : reader["sta"].ToString(),
+                        };
+                    }
+                }
+
+                conexao.Close();
+            }
+
+            return autor;
+        }
+
 
         public IEnumerable<Autor> ObterTodosAutores()
         {
@@ -61,7 +105,7 @@ namespace ProjetoAppLivraria.Repository
                         new Autor
                         {
                             Id = Convert.ToInt32(dr["codAutor"]),
-                            nomeAutor = (string)(dr["nomeAutor"]),
+                            nomeAutor = dr["nomeAutor"] == DBNull.Value ? null : (string)dr["nomeAutor"],
                             status = Convert.ToString(dr["sta"]),
                         }
                         );
