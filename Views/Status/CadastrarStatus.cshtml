@@ -1,0 +1,12 @@
+﻿@model ProjetoAppLivraria.Models.Status
+
+<h2>Criar Novo Status</h2>
+
+<form asp-action="CadastrarStatus" method="post">
+    <div class="form-group">
+        <label asp-for="Nome"></label>
+        <input asp-for="Nome" class="form-control mb-3" />
+        <span asp-validation-for="Nome" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Salvar</button>
+</form>

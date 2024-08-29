@@ -12,42 +12,27 @@
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.codLivro)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.nomeLivro)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.RefAutor.nomeAutor)
-            </th>
-            <th>
-                Situação
-            </th>
+            <th>@Html.DisplayNameFor(model => model.codLivro)</th>
+            <th>@Html.DisplayNameFor(model => model.nomeLivro)</th>
+            <th>@Html.DisplayNameFor(model => model.RefAutor.nomeAutor)</th>
+            <th>Situação</th>
             <th>Ações</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.codLivro)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.nomeLivro)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RefAutor.nomeAutor)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RefAutor.status)
-            </td>
-            <td>
-                @Html.ActionLink("Editar", "EditarLivro", new { id = item.codLivro }) |
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.codLivro)</td>
+                <td>@Html.DisplayFor(modelItem => item.nomeLivro)</td>
+                <td>@Html.DisplayFor(modelItem => item.RefAutor.nomeAutor)</td>
+                <td>@item.StatusDescricao</td>
+                <td>
+                    @Html.ActionLink("Editar", "EditarLivro", new { id = item.codLivro }) |
                     @Html.ActionLink("Excluir", "ExcluirLivro", new { id = item.codLivro },
-                new {onclick = "return confirm('Deseja realmente escluir este item?');"})
-            </td>
-        </tr>
-}
+                             new { onclick = "return confirm('Deseja realmente excluir este item?');" })
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

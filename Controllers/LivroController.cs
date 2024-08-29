@@ -39,7 +39,6 @@ namespace ProjetoAppLivraria.Controllers
         }
         public IActionResult EditarLivro(int id)
         {
-            // Carrega a lista de autor
             var listaAutor = _autorRepository.ObterTodosAutores();
             var ObjAutor = new Livro
             {
@@ -53,7 +52,6 @@ namespace ProjetoAppLivraria.Controllers
         [HttpPost]
         public IActionResult EditarLivro(Livro livro)
         {
-            //***Lista de autores***
             var listaAutor = _autorRepository.ObterTodosAutores();
             ViewBag.ListaAutores = new SelectList(listaAutor, "Id", "nomeAutor");
 

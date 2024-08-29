@@ -19,7 +19,7 @@ namespace ProjetoAppLivraria.Repository
                 MySqlCommand cmd = new MySqlCommand("insert into tbAutor (nomeAutor, sta) values (@nomeAutor, @sta)", conexao); // @: PARAMETRO
 
                 cmd.Parameters.Add("@nomeAutor", MySqlDbType.VarChar).Value = autor.nomeAutor;
-                cmd.Parameters.Add("@sta", MySqlDbType.VarChar).Value = autor.status;
+                cmd.Parameters.Add("@sta", MySqlDbType.VarChar).Value = autor.Status;
 
                 cmd.ExecuteNonQuery();
                 conexao.Close();
@@ -32,16 +32,19 @@ namespace ProjetoAppLivraria.Repository
             {
                 conexao.Open();
 
-                MySqlCommand cmd = new MySqlCommand("UPDATE tbAutor SET nomeAutor = @nomeAutor, sta = @sta WHERE codAutor = @codAutor", conexao);
+                MySqlCommand cmd = new MySqlCommand("UPDATE tbAutor SET nomeAutor = @nomeAutor, sta = @sta " +
+                                                    "WHERE codAutor = @codAutor", conexao);
 
                 cmd.Parameters.Add("@nomeAutor", MySqlDbType.VarChar).Value = autor.nomeAutor;
-                cmd.Parameters.Add("@sta", MySqlDbType.VarChar).Value = autor.status;
+                cmd.Parameters.Add("@sta", MySqlDbType.Int32).Value = autor.StatusId;
                 cmd.Parameters.Add("@codAutor", MySqlDbType.Int32).Value = autor.Id;
 
                 cmd.ExecuteNonQuery();
                 conexao.Close();
             }
         }
+
+
 
         public void ExcluirAutor(int id)
         {
@@ -65,7 +68,7 @@ namespace ProjetoAppLivraria.Repository
             {
                 conexao.Open();
 
-                MySqlCommand cmd = new MySqlCommand("SELECT * FROM tbAutor WHERE codAutor = @codAutor", conexao);
+                MySqlCommand cmd = new MySqlCommand("SELECT * FROM tbAutor a JOIN tbStatus s ON a.sta = s.codStatus WHERE codAutor = @codAutor", conexao);
                 cmd.Parameters.Add("@codAutor", MySqlDbType.Int32).Value = id;
 
                 using (var reader = cmd.ExecuteReader())
@@ -76,7 +79,11 @@ namespace ProjetoAppLivraria.Repository
                         {
                             Id = Convert.ToInt32(reader["codAutor"]),
                             nomeAutor = reader["nomeAutor"] == DBNull.Value ? null : reader["nomeAutor"].ToString(),
-                            status = reader["sta"] == DBNull.Value ? null : reader["sta"].ToString(),
+                            Status = new Status
+                            {
+                                Id = Convert.ToInt32(reader["sta"]),
+                                Nome = Convert.ToString(reader["sta"])
+                            }
                         };
                     }
                 }
@@ -88,13 +95,17 @@ namespace ProjetoAppLivraria.Repository
         }
 
 
+
         public IEnumerable<Autor> ObterTodosAutores()
         {
             List<Autor> Autlist = new List<Autor>();
             using (var conexao = new MySqlConnection(_conexaoMySQL))
             {
                 conexao.Open();
-                MySqlCommand cmd = new MySqlCommand("select * from tbautor", conexao);
+                MySqlCommand cmd = new MySqlCommand(
+                    "SELECT a.codAutor, a.nomeAutor, s.codStatus, s.sta " +
+                    "FROM tbAutor a " +
+                    "JOIN tbStatus s ON a.sta = s.codStatus", conexao);
                 MySqlDataAdapter da = new MySqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
@@ -106,9 +117,13 @@ namespace ProjetoAppLivraria.Repository
                         {
                             Id = Convert.ToInt32(dr["codAutor"]),
                             nomeAutor = dr["nomeAutor"] == DBNull.Value ? null : (string)dr["nomeAutor"],
-                            status = Convert.ToString(dr["sta"]),
+                            Status = new Status
+                            {
+                                Id = Convert.ToInt32(dr["codStatus"]),
+                                Nome = dr["sta"].ToString()
+                            }
                         }
-                        );
+                    );
                 }
                 return Autlist;
             }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using ProjetoAppLivraria.Models;
 using ProjetoAppLivraria.Repository.Contract;
 using Microsoft.Extensions.Logging;
@@ -9,11 +10,13 @@ namespace ProjetoAppLivraria.Controllers
     {
         private readonly ILogger<AutorController> _logger;
         private readonly IAutorRepository _autorRepository;
+        private readonly IStatusRepository _statusRepository;
 
-        public AutorController(ILogger<AutorController> logger, IAutorRepository autorRepository)
+        public AutorController(ILogger<AutorController> logger, IAutorRepository autorRepository, IStatusRepository statusRepository)
         {
             _logger = logger;
             _autorRepository = autorRepository;
+            _statusRepository = statusRepository;
         }
 
         public IActionResult Index()
@@ -21,19 +24,16 @@ namespace ProjetoAppLivraria.Controllers
             return View(_autorRepository.ObterTodosAutores());
         }
 
-        public IActionResult EditarAutor(int id)
-        {
-            var autor = _autorRepository.ObterAutor(id);
-            if (autor == null)
-            {
-                return NotFound();
-            }
-            return View(autor);
-        }
-
         [HttpGet]
         public IActionResult CadAutor()
         {
+            // Carrega a lista de status
+            ViewBag.Statuses = _statusRepository.ObterTodosStatus()
+                .Select(s => new SelectListItem
+                {
+                    Value = s.Id.ToString(),
+                    Text = s.Nome
+                });
             return View();
         }
 
@@ -42,9 +42,39 @@ namespace ProjetoAppLivraria.Controllers
         {
             if (ModelState.IsValid)
             {
-                _autorRepository.CadastrarAutor(autor); // Usando o método do repositório
+                _autorRepository.CadastrarAutor(autor);
                 return RedirectToAction(nameof(Index));
             }
+
+            // Recarrega a lista de status em caso de erro
+            ViewBag.Statuses = _statusRepository.ObterTodosStatus()
+                .Select(s => new SelectListItem
+                {
+                    Value = s.Id.ToString(),
+                    Text = s.Nome
+                });
+
+            return View(autor);
+        }
+
+        [HttpGet]
+        public IActionResult EditarAutor(int id)
+        {
+            var autor = _autorRepository.ObterAutor(id);
+            if (autor == null)
+            {
+                return NotFound();
+            }
+
+            // Carrega a lista de status
+            ViewBag.Statuses = _statusRepository.ObterTodosStatus()
+                .Select(s => new SelectListItem
+                {
+                    Value = s.Id.ToString(),
+                    Text = s.Nome,
+                    Selected = s.Id == autor.StatusId
+                });
+
             return View(autor);
         }
 
@@ -54,8 +84,18 @@ namespace ProjetoAppLivraria.Controllers
             if (ModelState.IsValid)
             {
                 _autorRepository.EditarAutor(autor);
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
             }
+
+            // Recarrega a lista de status em caso de erro
+            ViewBag.Statuses = _statusRepository.ObterTodosStatus()
+                .Select(s => new SelectListItem
+                {
+                    Value = s.Id.ToString(),
+                    Text = s.Nome,
+                    Selected = s.Id == autor.StatusId
+                });
+
             return View(autor);
         }
 
@@ -68,7 +108,7 @@ namespace ProjetoAppLivraria.Controllers
             }
 
             _autorRepository.ExcluirAutor(id);
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
     }
 }

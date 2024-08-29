@@ -14,5 +14,12 @@ namespace ProjetoAppLivraria.Models
         [Required(ErrorMessage = "O nome do autor é obrigatório")]
         public Autor RefAutor { get; set; }
         public List<Autor> ListaAutor { get; set; }
+        public string StatusDescricao
+        {
+            get
+            {
+                return RefAutor?.ObterStatusDescricao();
+            }
+        }
     }
 }

@@ -9,6 +9,7 @@ builder.Services.AddControllersWithViews();
 // Injeção de dependência
 builder.Services.AddScoped<IAutorRepository, AutorRepository>();
 builder.Services.AddScoped<ILivroRepository, LivroRepository>();
+builder.Services.AddScoped<IStatusRepository, StatusRepository>();
 
 var app = builder.Build();
 

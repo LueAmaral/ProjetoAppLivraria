@@ -1,0 +1,24 @@
+﻿@model ProjetoAppLivraria.Models.Status
+
+@{
+    ViewData["Title"] = "Editar Status";
+}
+
+<h2>Editar Status</h2>
+
+<form asp-action="EditarStatus" method="post">
+    <div class="form-group">
+        <input type="hidden" asp-for="Id" />
+        <label asp-for="Nome" class="control-label"></label>
+        <input asp-for="Nome" class="form-control mb-3" />
+        <span asp-validation-for="Nome" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Salvar" class="btn btn-primary" />
+    </div>
+</form>
+
+
+<div>
+    <a asp-action="Index">Voltar para a lista</a>
+</div>
