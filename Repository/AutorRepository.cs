@@ -2,13 +2,17 @@
 using ProjetoAppLivraria.Models;
 using ProjetoAppLivraria.Repository.Contract;
 using System.Data;
-using System.Security.Cryptography;
 
 namespace ProjetoAppLivraria.Repository
 {
-    public class AutorRepository(IConfiguration conf) : IAutorRepository
+    public class AutorRepository : IAutorRepository
     {
-        private readonly string _conexaoMySQL = conf.GetConnectionString("ConexaoMySQL");
+        private readonly string _conexaoMySQL;
+
+        public AutorRepository(IConfiguration conf)
+        {
+            _conexaoMySQL = conf.GetConnectionString("ConexaoMySQL");
+        }
 
         public void CadastrarAutor(Autor autor)
         {
@@ -16,10 +20,10 @@ namespace ProjetoAppLivraria.Repository
             {
                 conexao.Open();
 
-                MySqlCommand cmd = new MySqlCommand("insert into tbAutor (nomeAutor, sta) values (@nomeAutor, @sta)", conexao); // @: PARAMETRO
+                MySqlCommand cmd = new MySqlCommand("INSERT INTO tbAutor (nomeAutor, sta) VALUES (@nomeAutor, @sta)", conexao);
 
                 cmd.Parameters.Add("@nomeAutor", MySqlDbType.VarChar).Value = autor.nomeAutor;
-                cmd.Parameters.Add("@sta", MySqlDbType.VarChar).Value = autor.Status;
+                cmd.Parameters.Add("@sta", MySqlDbType.Int32).Value = autor.StatusId;
 
                 cmd.ExecuteNonQuery();
                 conexao.Close();
@@ -32,19 +36,17 @@ namespace ProjetoAppLivraria.Repository
             {
                 conexao.Open();
 
-                MySqlCommand cmd = new MySqlCommand("UPDATE tbAutor SET nomeAutor = @nomeAutor, sta = @sta " +
+                MySqlCommand cmd = new MySqlCommand("UPDATE tbAutor SET nomeAutor = @nomeAutor, sta = @StatusId " +
                                                     "WHERE codAutor = @codAutor", conexao);
 
                 cmd.Parameters.Add("@nomeAutor", MySqlDbType.VarChar).Value = autor.nomeAutor;
-                cmd.Parameters.Add("@sta", MySqlDbType.Int32).Value = autor.StatusId;
+                cmd.Parameters.Add("@StatusId", MySqlDbType.Int32).Value = autor.StatusId;
                 cmd.Parameters.Add("@codAutor", MySqlDbType.Int32).Value = autor.Id;
 
                 cmd.ExecuteNonQuery();
                 conexao.Close();
             }
         }
-
-
 
         public void ExcluirAutor(int id)
         {
@@ -79,10 +81,11 @@ namespace ProjetoAppLivraria.Repository
                         {
                             Id = Convert.ToInt32(reader["codAutor"]),
                             nomeAutor = reader["nomeAutor"] == DBNull.Value ? null : reader["nomeAutor"].ToString(),
+                            StatusId = reader["sta"] == DBNull.Value ? 0 : Convert.ToInt32(reader["sta"]),
                             Status = new Status
                             {
-                                Id = Convert.ToInt32(reader["sta"]),
-                                Nome = Convert.ToString(reader["sta"])
+                                Id = Convert.ToInt32(reader["codStatus"]),
+                                Nome = reader["sta"].ToString()
                             }
                         };
                     }
@@ -93,7 +96,6 @@ namespace ProjetoAppLivraria.Repository
 
             return autor;
         }
-
 
 
         public IEnumerable<Autor> ObterTodosAutores()
@@ -110,6 +112,7 @@ namespace ProjetoAppLivraria.Repository
                 DataTable dt = new DataTable();
                 da.Fill(dt);
                 conexao.Close();
+
                 foreach (DataRow dr in dt.Rows)
                 {
                     Autlist.Add(
@@ -117,6 +120,7 @@ namespace ProjetoAppLivraria.Repository
                         {
                             Id = Convert.ToInt32(dr["codAutor"]),
                             nomeAutor = dr["nomeAutor"] == DBNull.Value ? null : (string)dr["nomeAutor"],
+                            StatusId = Convert.ToInt32(dr["codStatus"]),
                             Status = new Status
                             {
                                 Id = Convert.ToInt32(dr["codStatus"]),
@@ -128,5 +132,6 @@ namespace ProjetoAppLivraria.Repository
                 return Autlist;
             }
         }
+
     }
 }

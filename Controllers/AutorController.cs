@@ -27,7 +27,6 @@ namespace ProjetoAppLivraria.Controllers
         [HttpGet]
         public IActionResult CadAutor()
         {
-            // Carrega a lista de status
             ViewBag.Statuses = _statusRepository.ObterTodosStatus()
                 .Select(s => new SelectListItem
                 {
@@ -46,7 +45,6 @@ namespace ProjetoAppLivraria.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // Recarrega a lista de status em caso de erro
             ViewBag.Statuses = _statusRepository.ObterTodosStatus()
                 .Select(s => new SelectListItem
                 {
@@ -61,19 +59,13 @@ namespace ProjetoAppLivraria.Controllers
         public IActionResult EditarAutor(int id)
         {
             var autor = _autorRepository.ObterAutor(id);
+
             if (autor == null)
             {
                 return NotFound();
             }
 
-            // Carrega a lista de status
-            ViewBag.Statuses = _statusRepository.ObterTodosStatus()
-                .Select(s => new SelectListItem
-                {
-                    Value = s.Id.ToString(),
-                    Text = s.Nome,
-                    Selected = s.Id == autor.StatusId
-                });
+            ViewBag.Statuses = new SelectList(_statusRepository.ObterTodosStatus(), "Id", "Nome", autor.StatusId);
 
             return View(autor);
         }
@@ -87,14 +79,7 @@ namespace ProjetoAppLivraria.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // Recarrega a lista de status em caso de erro
-            ViewBag.Statuses = _statusRepository.ObterTodosStatus()
-                .Select(s => new SelectListItem
-                {
-                    Value = s.Id.ToString(),
-                    Text = s.Nome,
-                    Selected = s.Id == autor.StatusId
-                });
+            ViewBag.Statuses = new SelectList(_statusRepository.ObterTodosStatus(), "Id", "Nome", autor.StatusId);
 
             return View(autor);
         }
